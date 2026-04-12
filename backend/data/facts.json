@@ -1,0 +1,22 @@
+{
+    "full_name": "Philippe Muhire",
+    "name": "Philippe Muhire",
+    "current_role": "Software/AI Engineer",
+    "location": "Your Location",
+    "email": "philipmuhire@gmail.com",
+    "linkedin": "linkedin.com/in/muhire-jean-philippe",
+    "specialties": [
+        "Software Engineering",
+        "AI Engineering",
+        "Cloud Engineering",
+        "DevOps Engineering"
+    ],
+    "years_experience": 8,
+    "education": [
+        {
+            "degree": "Software Engineering Degree",
+            "institution": "Adventist University of Central Africa",
+            "year": "2021"
+        }
+    ]
+}
