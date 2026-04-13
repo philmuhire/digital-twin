@@ -23,6 +23,30 @@ variable "bedrock_model_id" {
   default     = "amazon.nova-micro-v1:0"
 }
 
+variable "openai_api_key" {
+  description = <<-EOT
+    OpenAI API key for Lambda (OPENAI_API_KEY). Never commit this value.
+    Set at apply time: TF_VAR_openai_api_key, or OPENAI_API_KEY when using scripts/deploy.sh.
+    In GitHub Actions, add repository secret OPENAI_API_KEY for the deploy workflow.
+  EOT
+  type        = string
+  sensitive   = true
+  default     = null
+  nullable    = true
+}
+
+variable "openai_base_url" {
+  description = <<-EOT
+    Optional OpenAI-compatible API base URL for Lambda (OPENAI_BASE_URL). Do not commit real values.
+    Set at apply time: TF_VAR_openai_base_url, or OPENAI_BASE_URL when using scripts/deploy.sh.
+    In GitHub Actions, add repository secret OPENAI_BASE_URL for the deploy workflow (optional).
+  EOT
+  type        = string
+  sensitive   = true
+  default     = null
+  nullable    = true
+}
+
 variable "lambda_timeout" {
   description = "Lambda function timeout in seconds"
   type        = number

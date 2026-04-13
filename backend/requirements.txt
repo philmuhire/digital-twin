@@ -1,6 +1,7 @@
 fastapi
 uvicorn
 python-dotenv
+openai
 python-multipart
 boto3
 pypdf

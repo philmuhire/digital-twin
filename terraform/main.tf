@@ -14,6 +14,18 @@ locals {
     Environment = var.environment
     ManagedBy   = "terraform"
   }
+
+  # Lambda env: never put secrets in source; OpenAI values from TF_VAR_* / CI only.
+  lambda_env = merge(
+    {
+      CORS_ORIGINS     = var.use_custom_domain ? "https://${var.root_domain},https://www.${var.root_domain}" : "https://${aws_cloudfront_distribution.main.domain_name}"
+      S3_BUCKET        = aws_s3_bucket.memory.id
+      USE_S3           = "true"
+      BEDROCK_MODEL_ID = var.bedrock_model_id
+    },
+    var.openai_api_key != null && var.openai_api_key != "" ? { OPENAI_API_KEY = var.openai_api_key } : {},
+    var.openai_base_url != null && var.openai_base_url != "" ? { OPENAI_BASE_URL = var.openai_base_url } : {},
+  )
 }
 
 # S3 bucket for conversation memory
@@ -132,12 +144,7 @@ resource "aws_lambda_function" "api" {
   tags             = local.common_tags
 
   environment {
-    variables = {
-      CORS_ORIGINS     = var.use_custom_domain ? "https://${var.root_domain},https://www.${var.root_domain}" : "https://${aws_cloudfront_distribution.main.domain_name}"
-      S3_BUCKET        = aws_s3_bucket.memory.id
-      USE_S3           = "true"
-      BEDROCK_MODEL_ID = var.bedrock_model_id
-    }
+    variables = local.lambda_env
   }
 
   # Ensure Lambda waits for the distribution to exist
@@ -208,7 +215,7 @@ resource "aws_lambda_permission" "api_gw" {
 # CloudFront distribution
 resource "aws_cloudfront_distribution" "main" {
   aliases = local.aliases
-  
+
   viewer_certificate {
     acm_certificate_arn            = var.use_custom_domain ? aws_acm_certificate.site[0].arn : null
     cloudfront_default_certificate = var.use_custom_domain ? false : true

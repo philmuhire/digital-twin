@@ -16,6 +16,14 @@ cd terraform
 # New lines:
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 AWS_REGION=${DEFAULT_AWS_REGION:-us-east-1}
+
+# Optional OpenAI: prefer TF_VAR_*; else map from OPENAI_* (local shell / CI).
+if [ -n "${OPENAI_API_KEY:-}" ] && [ -z "${TF_VAR_openai_api_key:-}" ]; then
+  export TF_VAR_openai_api_key="$OPENAI_API_KEY"
+fi
+if [ -n "${OPENAI_BASE_URL:-}" ] && [ -z "${TF_VAR_openai_base_url:-}" ]; then
+  export TF_VAR_openai_base_url="$OPENAI_BASE_URL"
+fi
 terraform init -input=false \
   -backend-config="bucket=twin-terraform-state-${AWS_ACCOUNT_ID}" \
   -backend-config="key=${ENVIRONMENT}/terraform.tfstate" \
